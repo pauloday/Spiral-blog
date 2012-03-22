@@ -37,10 +37,12 @@
                 lns
                 (do (write-lines post (conj lns (str "P @ " time-string)))
                     (read-lines post)))]
-    {:title (second lines) :tags (split (nth lines 2) #"\s")
-     :date (apply str (nthnext (first lines) 3))
-     :body (markdown-to-html
-            (apply str (interpose "\n" (nthnext lines 3))))}))
+    (if (= (second lines) "D")
+      nil
+      {:title (second lines) :tags (split (nth lines 2) #"\s")
+       :date (apply str (nthnext (first lines) 3))
+       :body (markdown-to-html
+              (apply str (interpose "\n" (nthnext lines 3))))})))
 
 (defn- write-thing [thing namefn pagefn]
   (spit (namefn thing) (pagefn thing)))
@@ -76,7 +78,8 @@
                              (count *post-extension*)
                              (.getName %)))))
         files (filter is-post (file-seq (file *posts-folder*)))
-        posts (reverse (map read-post files)) ;; reversed so the most
+        posts (filter identity
+                      (reverse (map read-post files))) ;; reversed so the most
         ;; recent is on top
         tags (add-posts-tags (get-post-tags posts) posts)]
     (println "Saving CSS to: " *out-css-path* )
@@ -90,9 +93,12 @@
     (dorun (map write-tag tags)))
   (println "Blog generated in " *out-folder*))
 
-(defn -main [& args]
+(defn main [& args]
   (if args
     (do (println "Reading config file from: " (first args))
         (load-file (first args))
         (redef-config (slurp (first args)))))
   (update-blog))
+
+(defn -main [& args]
+  (apply main args))

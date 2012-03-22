@@ -47,7 +47,7 @@
   "tags/")
 
 ;; The logo to display in the sidebar. Must be a image
-(def *logo-image*
+(def *logo*
   "resources/img/spiral.png")
 
 ;; The url for the favicon
@@ -88,9 +88,6 @@
     (str *out-folder* *post-files-out-folder*))
 
   (def *tags-out-folder*
-    (str *out-folder* *tags-folder*))
-
-  (def *logo*
-    (str *out-folder* *logo-image*)))
+    (str *out-folder* *tags-folder*)))
 
 (redef-config "")

@@ -1,13 +1,18 @@
 (ns blog.css
   (:use gaka.core))
 
-(def mrg "30px")
-(def box-bcolor "#5e5e5e")
+(def mrg 30)
+(def box-bcolor "#5E5E5E")
 (def global-bcolor "#595959")
-(def fcolor "#D7D7D7")
-(def acolor "#ff9105")
-(def lightacolor "#ffb35a")
-(def center (list :width "935px" :margin-left "auto" :margin-right "auto"))
+(def fcolor "#E7E8F9")
+(def acolor "#EA7D24")
+(def lightacolor "#F79321")
+(def orangetext (list :color acolor
+                      :text-shadow "0px 1px 0px #6b4808"))
+(def pboxwidth 660)
+(def sbarwidth 182)
+(def center-width (+ pboxwidth (* mrg 3) sbarwidth 3))
+(def center (list :width center-width :margin-left "auto" :margin-right "auto"))
 (def content-box (list :border-color acolor
                        :border-style "solid"
                        :border-width "1px"
@@ -16,11 +21,11 @@
                        :padding-top mrg
                        :padding-bottom mrg
                        :background-color box-bcolor
-                       :box-shadow "0px 0px 5px #002454"))
+                       :box-shadow (str "0px 0px 6px" "#555525")))
 
 (def sidebar
    [:#sidebar ;; the general sidebar div
-    :width "182px"
+    :width sbarwidth
     :float "right"
     :margin-left mrg
     [:#links-box ;; the box with all the links
@@ -28,7 +33,7 @@
      :margin-top mrg
      :padding "20px"]
     [:a#tag-link:visited
-     :color acolor]
+     orangetext]
     [:#about-box ;; the box with the about info
      content-box
      :margin-top "17px"
@@ -37,11 +42,12 @@
      :color "#AAA"
      :padding "20px"]
     [:.sidebar-item ;; each individual link
-     :font-size "18px"
+     :font-size "14px"
+     :font-weight "bold"
      :padding "3px"
      :display "inline"]
     [:a.sidebar-item:visited
-     :color acolor]
+     orangetext]
     [:.tag-number
      :display "inline"]
     [:.sidebar-title ;; a title in the links box
@@ -51,7 +57,7 @@
 (def post
    [:#posts ;; the box for all posts
     content-box
-    :width "660px"
+    :width pboxwidth
     :float "left"
     [:.post-header ;; the title of each post
      :font-size "30px"
@@ -59,10 +65,10 @@
      :text-shadow "0px 1px 1px #6b4808"
      :margin-bottom mrg]
     [:.post-header:visited
-     :color acolor]
+     orangetext]
     [:h2
      :font-size "18px"
-     :color acolor]
+     orangetext]
     [:.post-header-hr ;; the hr under each title
      :border 0
      :width "100%"
@@ -92,7 +98,7 @@
     [:.tag-link
      :font-style "italic"]
     [:#tag-link:visited
-     :color acolor]
+     orangetext]
     [:#info-sep
      :font-style "normal"
      :color "#AAA"
@@ -136,9 +142,9 @@
     :height "100%"]
    [:a:link ;; the global link rules
     :text-decoration "none"
-    :color acolor]
+    orangetext]
    [:a:hover
-    :color acolor
+    orangetext
     :text-decoration "underline"]
    [:a:active
     :color lightacolor]

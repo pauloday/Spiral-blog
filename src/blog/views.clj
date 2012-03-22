@@ -57,7 +57,7 @@
 (defhtml page-prelude [& body]
   [:link {:rel "stylesheet"
           :type "text/css"
-          :href *out-css-path*}]
+          :href *out-css-file*}]
   [:link {:rel "shortcut icon"
           :type "image/x-icon"
           :href *favicon*}]
