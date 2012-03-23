@@ -88,6 +88,9 @@
     (str *out-folder* *post-files-out-folder*))
 
   (def *tags-out-folder*
-    (str *out-folder* *tags-folder*)))
+    (str *out-folder* *tags-folder*))
+
+  (def *logo-path*
+    (str *out-folder* *logo*)))
 
 (redef-config "")

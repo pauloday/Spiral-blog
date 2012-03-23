@@ -11,11 +11,12 @@
                       :text-shadow "0px 1px 0px #6b4808"))
 (def pboxwidth 660)
 (def sbarwidth 182)
+(def border 1)
 (def center-width (+ pboxwidth (* mrg 3) sbarwidth 3))
 (def center (list :width center-width :margin-left "auto" :margin-right "auto"))
 (def content-box (list :border-color acolor
                        :border-style "solid"
-                       :border-width "1px"
+                       :border-width border
                        :padding-left mrg
                        :padding-right mrg
                        :padding-top mrg

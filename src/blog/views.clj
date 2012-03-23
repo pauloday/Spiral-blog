@@ -25,7 +25,7 @@
     [:div#sidebar
      [:div#logo
      [:a#logo-link {:href *out-html-path*}
-      [:img {:src *logo*}]]]
+      [:img {:src *logo-path*}]]]
      [:div#links-box
       (map #(apply (fn [x y] (sidebar-item x y  tags)) %)
            (partition 2 *sidebar-items*))]
@@ -57,7 +57,7 @@
 (defhtml page-prelude [& body]
   [:link {:rel "stylesheet"
           :type "text/css"
-          :href *out-css-file*}]
+          :href *out-css-path*}]
   [:link {:rel "shortcut icon"
           :type "image/x-icon"
           :href *favicon*}]
