@@ -11,8 +11,8 @@
                       :text-shadow "0px 1px 0px #6b4808"))
 (def pboxwidth 660)
 (def sbarwidth 182)
-(def border 1)
-(def center-width (+ pboxwidth (* mrg 3) sbarwidth 3))
+(def border 3)
+(def center-width (+ pboxwidth (* mrg 3) sbarwidth (* border 4)))
 (def center (list :width center-width :margin-left "auto" :margin-right "auto"))
 (def content-box (list :border-color acolor
                        :border-style "solid"
@@ -22,7 +22,7 @@
                        :padding-top mrg
                        :padding-bottom mrg
                        :background-color box-bcolor
-                       :box-shadow (str "0px 0px 6px" "#555525")))
+                       :box-shadow (str "0px 0px 20px" "#494949")))
 
 (def sidebar
    [:#sidebar ;; the general sidebar div
