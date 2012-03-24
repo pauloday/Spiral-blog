@@ -24,8 +24,10 @@
   (def sidebar
     [:div#sidebar
      [:div#logo
-     [:a#logo-link {:href *out-html-path*}
-      [:img {:src *logo-path*}]]]
+      [:div#logotop.logoc]
+      [:div#logomiddle.logoc]
+      [:div#logoleft.logoc]
+      [:div#logoright.logoc]]
      [:div#links-box
       (map #(apply (fn [x y] (sidebar-item x y  tags)) %)
            (partition 2 *sidebar-items*))]
@@ -61,8 +63,16 @@
   [:link {:rel "shortcut icon"
           :type "image/x-icon"
           :href *favicon*}]
+  [:link {:href "resources/google-code-prettify/prettify.css"
+          :type "text/css"
+          :rel "stylesheet"}]
+  [:script {:type "text/javascript"
+            :src "resources/google-code-prettify/prettify.js"}]
+  [:script {:type "text/javascript"
+            :src "resources/google-code-prettify/lang-clj.js"}]
   [:title *title*]
   [:body
+   { :onload "prettyPrint()"}
    [:div#content
     body
     sidebar
@@ -80,10 +90,11 @@
    [:div#posts
     (html-post post)]))
 
+
 (defhtml tag-page [tag]
   ;; tag is {:tag "name" :n #of articles
   ;; :posts [posts]}
   (page-prelude
-   [:div#tag-header (str (tag :n) " Article(s) filed under: " (tag :name))]
    [:div#posts
+    (str (tag :n) " Article(s) filed under: " (tag :name))
     (map html-post (tag :posts))]))
