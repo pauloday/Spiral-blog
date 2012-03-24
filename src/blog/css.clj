@@ -15,7 +15,7 @@
 (def center-width (+ pboxwidth (* mrg 3) sbarwidth (* border 4)))
 (def center (list :width center-width :margin-left "auto" :margin-right "auto"))
 (def content-box (list :border-color acolor
-                       :border-style "solid"
+                       :border-style "none"
                        :border-width border
                        :padding-left mrg
                        :padding-right mrg
@@ -23,7 +23,6 @@
                        :padding-bottom mrg
                        :background-color box-bcolor
                        :box-shadow (str "0px 0px 20px" "#494949")))
-
 (def sidebar
    [:#sidebar ;; the general sidebar div
     :width sbarwidth
@@ -128,7 +127,7 @@
 
 (def global
   [:html
-   :margin-top mrg
+   :margin-top 0
    :padding 0
    :background-color global-bcolor
    :color fcolor
