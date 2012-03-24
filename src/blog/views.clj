@@ -75,8 +75,7 @@
    { :onload "prettyPrint()"}
    [:div#content
     body
-    sidebar
-    footer]])
+    sidebar]])
 
 (defhtml home-page [posts]
   ;; posts is a vector of maps {:title "" :tags
