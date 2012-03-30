@@ -1,12 +1,13 @@
 (ns blog.views
   (:use hiccup.core
-        blog.config))
+        blog.config)
+  (:import [java.net URLEncoder]))
 
 (defn make-post-name [post]
-  (str *posts-out-folder* (post :title) ".html"))
+  (str *posts-out-folder* (URLEncoder/encode (post :title)) ".html"))
 
 (defn make-tag-name [tag]
-  (str *tags-out-folder* (tag :name) ".html"))
+  (str *tags-out-folder*  (URLEncoder/encode (tag :name)) ".html"))
 
 (defhtml footer []
   [:div#footer

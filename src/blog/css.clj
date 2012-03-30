@@ -112,12 +112,17 @@
   [:#posts
    :width content-width
    :margin "10px"
+   :float "left"
    center
 
    [:#post-list-title
     :display "inline"
     :margin "0px 50px 0px 50px"
     :line-height "2.8"]
+
+   [:.post-listing
+    :float "left"
+    :width "100%"]
 
    [:#date
     :display "inline"
@@ -150,6 +155,8 @@
    :text-align "center"
    :color lgrey
    :padding pad
+   :float "left"
+   :width "100%"
 
    [:a:visited
     :color color]])

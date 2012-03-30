@@ -7,10 +7,10 @@
         [clojure.string :only [split]]
         [clj-time.core :only [now from-time-zone
                               time-zone-for-offset day year]]
-        [clj-time.format :only [formatters formatter unparse]]
+        [clj-time.format :only [formatters  unparse]]
         [clojure.contrib.duck-streams :only [read-lines write-lines]]
         [clojure.java.io :only [file]])
-  (:import [java.net URLEncoder]
+  (:import
            [org.mozilla.javascript Context ScriptableObject])
   (:gen-class :main true))
 
