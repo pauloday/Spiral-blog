@@ -5,8 +5,9 @@
         [blog.css :only [save-blog-css]]
         hiccup.core
         [clojure.string :only [split]]
-        [clj-time.core :only [now from-time-zone time-zone-for-offset]]
-        [clj-time.format :only [formatters unparse]]
+        [clj-time.core :only [now from-time-zone
+                              time-zone-for-offset day year]]
+        [clj-time.format :only [formatters formatter unparse]]
         [clojure.contrib.duck-streams :only [read-lines write-lines]]
         [clojure.java.io :only [file]])
   (:import [java.net URLEncoder]
@@ -27,20 +28,16 @@
 
 (defn- read-post [post]
   (let [lns (read-lines post)
-        time (unparse (formatters :rfc822)
-                      (from-time-zone (now) (time-zone-for-offset 8)))
-        time-string (str (apply str (take 16 time))
-                         " / "
-                         (apply str (take 5 (nthnext time 17)))
-                         " PST")
-        lines (if (= \P (first (first lns)))
+        time (from-time-zone (now) (time-zone-for-offset 8))
+        date-list [(unparse (formatter "MMM") time) (day time) (year time)]
+        lines (if (= \[ (first (first lns)))
                 lns
-                (do (write-lines post (conj lns (str "P @ " time-string)))
+                (do (write-lines post (conj lns (str date-list)))
                     (read-lines post)))]
     (if (= (second lines) "D")
       nil
       {:title (second lines) :tags (split (nth lines 2) #"\s")
-       :date (apply str (nthnext (first lines) 3))
+       :date (read-string (first lines))
        :body (markdown-to-html
               (apply str (interpose "\n" (nthnext lines 3))))})))
 
@@ -84,7 +81,6 @@
         tags (add-posts-tags (get-post-tags posts) posts)]
     (println "Saving CSS to: " *out-css-path* )
     (save-blog-css *out-css-path*)
-    (def-sidebar tags)
     (println "Saving home page to: " *out-html-path*)
     (spit *out-html-path* (home-page posts))
     (println "Saving posts to: " *posts-out-folder*)

@@ -60,9 +60,7 @@
 ;; with text title, then a list of all tags, as links to their
 ;; respective tags page. Title just makes "title" a plain-text title
 (def *sidebar-items*
-  ["Tags" :tags
-   "On Github" :title
-   "This Site" "https://github.com/ertdfgcb/"])
+  ["This Site" "https://github.com/ertdfgcb/" "The code for generating this blog on Github"])
 
 ;; The text to display below the links box. newlines are ignored
 (def *about-text*

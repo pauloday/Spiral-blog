@@ -1,182 +1,158 @@
 (ns blog.css
   (:use gaka.core))
 
-(def mrg 10)
-(def pad 30)
-(def box-bcolor "#E7E8F9")
-(def global-bcolor "#595959")
-(def fcolor "#393939")
-(def acolor "#EA7D24")
-(def lightacolor "#F79321")
-(def orangetext (list :color acolor))
-(def pboxwidth (- 660 (* 2 pad)))
-(def sbarwidth (- 180 (* 2 pad)))
-(def border 3)
-(def center-width (+ pboxwidth mrg sbarwidth (* pad 4)))
-(def center (list :width center-width :margin-left "auto" :margin-right "auto"))
-(def shadow (list :box-shadow "0px 0px 20px #494949"))
-(def box-bg (list :background-color box-bcolor))
-(def content-box (list :border-color acolor
-                       :padding pad
-                       box-bg
-                       ))
 
-(def sidebar
-  [:#sidebar ;; the general sidebar div
-   content-box
-   :width sbarwidth
-   :float "right"
-
-   [:a#tag-link:visited
-    orangetext]
-
-   [:#about-box ;; the box with the about info
-    box-bg
-    :font-style "italic"
-    :font-size "12px"
-    :color "#696969"
-    :padding-top "20px"]
-
-   [:.sidebar-item ;; each individual link
-    :font-size "14px"
-    :font-weight "bold"
-    :padding "3px"
-    :display "inline"]
-
-   [:a.sidebar-item:visited
-    orangetext]
-
-   [:.tag-number
-    :display "inline"]
-
-   [:.sidebar-title ;; a title in the links box
-    :font-size "17px"
-    :text-indent "0"]])
+(def color "#EA7D24")
+(def lcolor "F79321")
+(def lgrey "#888")
+(def dgrey "#393939")
+(def bg "#eee")
+(def hpad "30px")
+(def center (list :margin-left "auto" :margin-right "auto"))
+(def content-width 700)
+(def pad "30px")
+(def info-pad 10)
+(def info-width (- content-width (* info-pad 4)))
+(def info-item-width (- (/ content-width 2) (* 4 info-pad) 1))
 
 
-
-(def post
-  [:#posts ;; the box for all posts
-   content-box
-   :width pboxwidth
-   :float "left"
-   :position "reletive"
-
-   [:.post-header ;; the title of each post
-    :font-size "30px"
-    :font-weight "bold"
-    :margin-bottom mrg]
-
-   [:.post-header:visited
-    orangetext]
-
-   [:h2
-    :font-size "18px"
-    orangetext]
-
-   [:.post-header-hr ;; the hr under each title
-    :border 0
-    :width "100%"
-    :height "1px"
-    :color acolor
-    :background-color acolor
-    :margin-top mrg
-    :margin-bottom mrg]
-
-   [:.post-body ;; the actual text of the post
-    :font-size "14px"
-    :font-weight "normal"
-    :margin-top "10px"]
-
-   [:.post-info ;; the tags. date, and author info
-    :font-size "10px"
-    :color "#888"
-    :font-style "normal"
-    :text-indent "10px"
-    :display "inline"]
-
-   [:.between-post-hr ;; the hr that goes between posts
-    :border 0
-    :width "80%"
-    :height "3px"
-    :color global-bcolor
-    :margin-top "40px"
-    :margin-bottom "40px"
-    :background-color global-bcolor]
-
-   [:.tag-link
-    :font-style "italic"]
-   [:#tag-link:visited
-    orangetext]
-
-   [:#info-sep
-    :font-style "normal"
-    :color "#AAA"
-    :font-size "14px"
-    :display "inline"]])
-
-
-
-(def footerdiv
-  [:#footer ;; the footer div
-   :color "#8B8B8B"
-   :margin-top mrg
-   :margin-bottom mrg
-   :float "left"
-   :text-align "center"
-   :width "780px"
-
-   [:a.footer-link ;; the links in the footer
-    :color "#9D9D9D"
-    :text-decoration "none"]
-
-   [:a.footer-link:hover
-    :text-decoration "underline"]])
-
+(defn header-def [h size under align color & rest]
+  [(keyword h)
+   :font-size size
+   :text-align align
+   :color color
+   :padding 0
+   :line-height 1])
 
 
 (def global
   [:html
    :margin-top 0
    :padding 0
-   :background-color acolor
    :color fcolor
    :font-family "Helvetica,Arial,Sans-serif"
    :font-size "14px"
-   :line-height "2"
+   :background-color bg
 
    [:img
     :display "block"
-    :margin-left "auto"
-    :margin-right "auto"]
+    center]
 
    [:body ;; the body of the site
     :margin 0
     :padding 0]
 
-   [:#content ;; the posts-box, sidebar, and logo all in one div
+   [:#content
+    :width content-width
     center]
 
-   [:a:link ;; the global link rules
-    :text-decoration "none"
-    orangetext]
+   (header-def 'h1 "70px" false "center" color)
+   (header-def 'h2 "18px" true "center" lgrey)
+   (header-def 'h3 "25px" true "left" lgrey)
+   (header-def 'h4 "30px" false "left" color)
+   (header-def 'h5 "12px" false "left" lgrey)
 
-   [:a:hover
-    orangetext
+   [:#author-title
+    :padding-top pad
+    :text-align "center"]
+
+   [:#author-link
+    :color lgrey
     :text-decoration "underline"]
 
+   [:#author-link:hover
+    :color lcolor]
+
+   [:.tag-link:visited
+    :color color]
+
+   [:a
+    :text-decoration "none"
+    :color color]
+
+   [:a:hover
+    :text-decoration "underline"
+    :color lcolor]
+
    [:a:active
-    :color lightacolor]
+    :color color]
 
    [:a:visited
-    :color lightacolor]
+    :color lcolor]])
 
-   [:#tag-header ;; the header seen when looking at a tags page
+
+(def info
+  [:#info
+   :width  info-width
+   :margin "20px"
+   :float "right"
+   :line-height "2"
+   :display "table"
+   center
+
+   [:.info-row
+    :display "table-row"]
+
+   [:.info-cell
+    :width info-item-width
+    :display "table-cell"]
+
+   [:#about
+    :padding info-pad]
+
+   [:#links
+    :border-left (str "1px " "dotted " lgrey)
+    :padding info-pad
+
+    [:#link-desc
+     :display "inline"]]])
+
+
+(def posts-list
+  [:#posts
+   :width content-width
+   :margin "10px"
+   center
+
+   [:#post-list-title
+    :display "inline"
+    :margin "0px 50px 0px 50px"
+    :line-height "2.8"]
+
+   [:#date
+    :display "inline"
+    :color lgrey
     :float "left"
-    :padding pad
-    :font-size "24px"]])
+    :font-family "Andale Mono, monospace"
+
+    [:#month
+     :font-size "18px"
+     :line-height "20px"]
+
+    [:#day
+     :font-size "30px"
+     :color dgrey
+     :line-height "20px"]
+
+    [:#year
+     :font-size "14px"
+     :line-height "16px"]]])
 
 
+(def post
+  [:#post
+   :width content-width
+   :line-height "1.9"])
+
+
+(def footer
+  [:#footer
+   :text-align "center"
+   :color lgrey
+   :padding pad
+
+   [:a:visited
+    :color color]])
 
 (defn save-blog-css [file]
-  (save-css file global sidebar post footerdiv))
+  (save-css file global info posts-list post footer))
