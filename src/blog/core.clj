@@ -6,8 +6,8 @@
         hiccup.core
         [clojure.string :only [split]]
         [clj-time.core :only [now from-time-zone
-                              time-zone-for-offset day year]]
-        [clj-time.format :only [formatters  unparse]]
+                              time-zone-for-offset year]]
+        [clj-time.format :only [formatter unparse parse]]
         [clojure.contrib.duck-streams :only [read-lines write-lines]]
         [clojure.java.io :only [file]])
   (:import
@@ -29,7 +29,9 @@
 (defn- read-post [post]
   (let [lns (read-lines post)
         time (from-time-zone (now) (time-zone-for-offset 8))
-        date-list [(unparse (formatter "MMM") time) (day time) (year time)]
+        date-list [(unparse (formatter "MMM") time)
+                   (unparse (formatter "dd") time)
+                   (year time)]
         lines (if (= \[ (first (first lns)))
                 lns
                 (do (write-lines post (conj lns (str date-list)))
@@ -49,6 +51,10 @@
 
 (defn- write-tag [tag]
   (write-thing tag make-tag-name tag-page))
+
+(defn- write-extra [[inpath outpath]]
+  (spit (str *out-folder* outpath)
+        (post-page (read-post (str *out-folder* inpath)))))
 
 (defn- get-post-tags [posts]
   (let [tags (distinct (mapcat :tags posts))
@@ -86,7 +92,16 @@
     (println "Saving posts to: " *posts-out-folder*)
     (dorun (map write-post posts))
     (println "Saving tags to: " *tags-out-folder*)
-    (dorun (map write-tag tags)))
+    (dorun (map write-tag tags))
+    (if (> (count *links*) 9)
+      (do (concat *links* ["More" "links.html" ""])
+          (prn "here")
+          (println "*Links list longer than 3 items*")
+          (println "Saving links page to: " (str *out-folder* "links.html"))
+          (spit (str *out-folder* "links.html") (links-page))))
+    (if *extra-pages*
+      (do (println "Generating extra pages")
+          (map write-extra (partition 2 *extra-pages*)))))
   (println "Blog generated in " *out-folder*))
 
 (defn main [& args]

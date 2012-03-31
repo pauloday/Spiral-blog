@@ -59,12 +59,14 @@
 ;; text. Content can be one of :tags or :title. :tags makes a title
 ;; with text title, then a list of all tags, as links to their
 ;; respective tags page. Title just makes "title" a plain-text title
-(def *sidebar-items*
+(def *links*
   ["This Site" "https://github.com/ertdfgcb/" "The code for generating this blog on Github"])
 
 ;; The text to display below the links box. newlines are ignored
 (def *about-text*
   "About text")
+
+(def *extra-pages* ["extra/music.md" "music.html"])
 
 ;; For convenience in the rest of the code. All this does is make all
 ;; the reletive paths above into absolute paths for the rest of the

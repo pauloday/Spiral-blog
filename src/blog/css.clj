@@ -6,12 +6,11 @@
 (def lcolor "F79321")
 (def lgrey "#888")
 (def dgrey "#393939")
-(def bg "#eee")
-(def hpad "30px")
+(def bg "#fff")
+(def mrg 30)
+(def pad 30)
 (def center (list :margin-left "auto" :margin-right "auto"))
 (def content-width 700)
-(def pad "30px")
-(def info-pad 10)
 (def info-width (- content-width (* info-pad 4)))
 (def info-item-width (- (/ content-width 2) (* 4 info-pad) 1))
 
@@ -29,7 +28,7 @@
   [:html
    :margin-top 0
    :padding 0
-   :color fcolor
+   :color dgrey
    :font-family "Helvetica,Arial,Sans-serif"
    :font-size "14px"
    :background-color bg
@@ -44,6 +43,7 @@
 
    [:#content
     :width content-width
+    :overflow "hidden"
     center]
 
    (header-def 'h1 "70px" false "center" color)
@@ -54,7 +54,8 @@
 
    [:#author-title
     :padding-top pad
-    :text-align "center"]
+    :text-align "center"
+    :text-indent "-20px"]
 
    [:#author-link
     :color lgrey
@@ -83,26 +84,23 @@
 
 (def info
   [:#info
-   :width  info-width
-   :margin "20px"
+   :width "100%"
    :float "right"
+   :margin-top "30px"
    :line-height "2"
    :display "table"
-   center
 
    [:.info-row
     :display "table-row"]
 
    [:.info-cell
     :width info-item-width
-    :display "table-cell"]
-
-   [:#about
-    :padding info-pad]
+    :display "table-cell"
+    :padding-right info-pad
+    :padding-left info-pad]
 
    [:#links
     :border-left (str "1px " "dotted " lgrey)
-    :padding info-pad
 
     [:#link-desc
      :display "inline"]]])
@@ -111,43 +109,51 @@
 (def posts-list
   [:#posts
    :width content-width
-   :margin "10px"
+   :margin-top mrg
+   :margin-bottom mrg
    :float "left"
    center
-
-   [:#post-list-title
-    :display "inline"
-    :margin "0px 50px 0px 50px"
-    :line-height "2.8"]
 
    [:.post-listing
     :float "left"
     :width "100%"]
 
-   [:#date
+   [:#post-list-title
     :display "inline"
-    :color lgrey
-    :float "left"
-    :font-family "Andale Mono, monospace"
+    :margin "0px 0px 0px 50px"]
 
-    [:#month
-     :font-size "18px"
-     :line-height "20px"]
+   [:#tags
+    :display "inline"
+    :margin "0px 0px 0px 75px"
+    :line-height "1.5"]])
 
-    [:#day
-     :font-size "30px"
-     :color dgrey
-     :line-height "20px"]
 
-    [:#year
-     :font-size "14px"
-     :line-height "16px"]]])
+(def date
+  [ :#date
+   :display "inline"
+   :color lgrey
+   :float "left"
+   :margin "0px 14px 0px 0px"
+   :font-family "Andale Mono, monospace"
+
+   [:#month
+    :font-size "18px"
+    :line-height "20px"]
+
+   [:#day
+    :font-size "30px"
+    :color dgrey
+    :line-height "20px"]
+
+   [:#year
+    :font-size "14px"
+    :line-height "16px"]])
 
 
 (def post
   [:#post
    :width content-width
-   :line-height "1.9"])
+   :line-height "2.1"])
 
 
 (def footer
@@ -157,9 +163,10 @@
    :padding pad
    :float "left"
    :width "100%"
+   :line-height "1.5"
 
    [:a:visited
     :color color]])
 
 (defn save-blog-css [file]
-  (save-css file global info posts-list post footer))
+  (save-css file global info posts-list post date footer))

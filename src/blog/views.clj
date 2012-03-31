@@ -15,23 +15,28 @@
    [:a.footer-link {:href "http://clojure.org/"}
     "Clojure"]
    " and "
-   [:a.footer-link {:href "http://github.com/weavejester/hiccup"} "Hiccup"]])
+   [:a.footer-link {:href "http://github.com/weavejester/hiccup"} "Hiccup"]
+   [:br]
+   [:a {:href (str "mailto:" *email*)} "Contact me"]])
 
-(defhtml page-prelude [& body]
+(defhtml page-prelude [title & body]
   [:link {:rel "stylesheet"
           :type "text/css"
           :href *out-css-path*}]
   [:link {:rel "shortcut icon"
           :type "image/x-icon"
           :href *favicon*}]
-  [:link {:href "resources/google-code-prettify/prettify.css"
+  [:link {:href (str *out-folder*
+                     "resources/google-code-prettify/prettify.css")
           :type "text/css"
           :rel "stylesheet"}]
   [:script {:type "text/javascript"
-            :src "resources/google-code-prettify/prettify.js"}]
+            :src (str *out-folder*
+                      "resources/google-code-prettify/prettify.js")}]
   [:script {:type "text/javascript"
-            :src "resources/google-code-prettify/lang-clj.js"}]
-  [:title *title*]
+            :src (str *out-folder*
+                      "resources/google-code-prettify/lang-clj.js")}]
+  [:title title]
   [:body
    { :onload "prettyPrint()"}
    [:div#content
@@ -50,29 +55,36 @@
       "More on "
    (apply str (interpose " " (map tag-link tags)))])
 
+(defhtml make-date [date]
+  [:p#date
+    [:span#month
+     (first date)]
+    [:br]
+    [:span#day
+     (second date)]
+    [:br]
+    [:span#year
+     (nth date 2)]])
+
 (defhtml post-list [post]
+  (make-date (:daye post))
   [:div.post-listing
+   (make-date (:date post))
+   [:br]
    [:h4#post-list-title
     [:a {:href (make-post-name post)}
      (:title post)]]
-   [:p#date
-    [:span#month
-     (-> post :date first)]
-    [:br]
-    [:span#day
-     (-> post :date second)]
-    [:br]
-    [:span#year
-     (nth (:date post) 2)]]])
+   [:br]
+   (tags (:tags post))])
 
-(defn make-link [[text link desc]]
-  (html [:a.link-item {:href link} text]
-        [:div#link-desc " - " desc [:br]]))
+(defhtml make-link [[text link desc]]
+  [:a.link-item {:href link} text]
+  [:div#link-desc " - " desc [:br]])
 
 (defhtml home-page [posts]
   ;; posts is a vector of maps {:title "" :tags
   ;; [""] :body ""}
-  (page-prelude
+  (page-prelude *title*
    [:h1#author-title
     *author*]
    [:div#info
@@ -86,25 +98,33 @@
       [:div
        [:h2
         "Links"]
-       (map make-link (partition 3 *sidebar-items*))]]]]
+       (map make-link (partition 3 *links*))]]]]
    [:div#posts
     [:h3
      "Posts"]
     (map post-list posts)]))
 
 (defhtml post-page [post]
-  (page-prelude
+  (page-prelude (str (:title post) " - " *title*)
    (author-link)
    [:h1
     (:title post)]
    [:div#post
+    (make-date (:date post))
     (:body post)]
    (tags (:tags post))))
 
 (defhtml tag-page [tag]
-  (page-prelude
+  (page-prelude (str "Posts about " (:name tag) " - " *title*)
    (author-link)
-   [:h1
+   [:h1#tag-title
     (:name tag)]
    [:div#posts
     (map post-list (:posts tag))]))
+
+(defhtml links-page []
+  (page-prelude (str "Links - " *title*)
+   (author-link)
+   [:h1
+    "Links"
+    (map make-link (partition 3 *links*))]))
