@@ -2,57 +2,41 @@
 
 ;; This is not the config file to change the config in. All this
 ;; contains is the default values that should never be used, and some
-;; generator defs for convenience in the rest of the code. Make a
-;; seperate config file with the values below and use that to generate
-;; the blog instead.
+;; generator defs for convenience in the rest of the code. Use
+;; "example-conf.clj" in the main directory for your configuration(s)
 
-(def *author*
-  "Author")
+(def *author* "Author")
 
-(def *email*
-  "Email")
+(def *email* "Email")
 
 ;; Displayed in the taskbar of the browser
-(def *title*
-  "Title")
+(def *title* "Title")
+
+;; Timezone offset from UTC
+(def *tz* 8)
 
 ;; All files ending with this extension in the posts folder are
 ;; treated as posts
-(def *post-extension*
-  ".txt")
+(def *post-extension* ".txt")
 
 ;; The folder to output the blog to, it should also contain the
 ;; resources file
-(def *out-folder*
-  "out-folder")
-
-;; paths are reletive to the out-folder
-(def *out-css-file*
-  "resources/public/css/style.css")
+(def *out-folder* "out-folder/")
 
 ;; The homepage file
-(def *out-html-file*
-  "index.html")
+(def *out-html-file* "index.html")
 
 ;; The folder thatcontains all the posts
-(def *post-files-folder*
-  "posts/")
+(def *post-files-folder* "posts/")
 
 ;; The folder that contains all the HTML for each post page
-(def *post-files-out-folder*
-  "posts/out/")
+(def *posts-out-folder* "posts/")
 
 ;; The folder that contains all the html for each tag page
-(def *tags-folder*
-  "tags/")
-
-;; The logo to display in the sidebar. Must be a image
-(def *logo*
-  "resources/img/spiral.png")
+(def *tags-folder* "tags/")
 
 ;; The url for the favicon
-(def *favicon*
-  "http://dl.dropbox.com/u/7568291/favicon.ico")
+(def *favicon* "http://dl.dropbox.com/u/7568291/favicon.ico")
 
 ;; The sidebar items. A list of [title content] where title is the
 ;; text that is displayed, and content is the link or type of
@@ -63,10 +47,9 @@
   ["This Site" "https://github.com/ertdfgcb/" "The code for generating this blog on Github"])
 
 ;; The text to display below the links box. newlines are ignored
-(def *about-text*
-  "About text")
+(def *about-text* "About text")
 
-(def *extra-pages* ["extra/music.md" "music.html"])
+(def *extra-pages* ["extra/extra-page.md" "extra-page.html"])
 
 ;; For convenience in the rest of the code. All this does is make all
 ;; the reletive paths above into absolute paths for the rest of the
@@ -81,16 +64,13 @@
   (def *out-html-path*
     (str *out-folder* *out-html-file*))
 
-  (def *posts-folder*
+  (def *posts-path*
     (str *out-folder* *post-files-folder*))
 
-  (def *posts-out-folder*
-    (str *out-folder* *post-files-out-folder*))
+  (def *posts-out-path*
+    (str *out-folder* *posts-out-folder*))
 
-  (def *tags-out-folder*
-    (str *out-folder* *tags-folder*))
-
-  (def *logo-path*
-    (str *out-folder* *logo*)))
+  (def *tags-out-path*
+    (str *out-folder* *tags-folder*)))
 
 (redef-config "")

@@ -3,8 +3,9 @@
         blog.config)
   (:import [java.net URLEncoder]))
 
-(defn make-post-name [post]
-  (str *posts-out-folder* (URLEncoder/encode (post :title)) ".html"))
+(defn make-post-name [post & root]
+  (let [prestr (if root (first root) *posts-out-path*)]
+    (str prestr (URLEncoder/encode (post :title)) ".html")))
 
 (defn make-tag-name [tag]
   (str *tags-out-folder*  (URLEncoder/encode (tag :name)) ".html"))
@@ -22,20 +23,20 @@
 (defhtml page-prelude [title & body]
   [:link {:rel "stylesheet"
           :type "text/css"
-          :href *out-css-path*}]
+          :href (str "/" *out-css-file*)}]
   [:link {:rel "shortcut icon"
           :type "image/x-icon"
           :href *favicon*}]
-  [:link {:href (str *out-folder*
-                     "resources/google-code-prettify/prettify.css")
+  [:link {:href
+          "/resources/google-code-prettify/prettify.css"
           :type "text/css"
           :rel "stylesheet"}]
   [:script {:type "text/javascript"
-            :src (str *out-folder*
-                      "resources/google-code-prettify/prettify.js")}]
+            :src
+            "/resources/google-code-prettify/prettify.js"}]
   [:script {:type "text/javascript"
-            :src (str *out-folder*
-                      "resources/google-code-prettify/lang-clj.js")}]
+            :src
+            "/resources/google-code-prettify/lang-clj.js"}]
   [:title title]
   [:body
    { :onload "prettyPrint()"}
@@ -45,37 +46,36 @@
 
 (defhtml author-link []
   [:h3#author-title
-   [:a#author-link {:href *out-html-path*} *author*]])
+   [:a#author-link {:href "/"} *author*]])
 
 (defhtml tag-link [name]
-  [:a.tag-link {:href (str *out-folder* *tags-folder* name ".html")} name])
+  [:a.tag-link {:href (str "/" *tags-folder* name ".html")} name])
 
-(defhtml tags [tags]
+(defhtml tags [tags & intro]
   [:h5#tags
-      "More on "
+      (if intro (first intro) "More on ")
    (apply str (interpose " " (map tag-link tags)))])
 
 (defhtml make-date [date]
   [:p#date
     [:span#month
-     (first date)]
+     (apply str (take 3 date))]
     [:br]
     [:span#day
-     (second date)]
+     (apply str (drop 3 (take 5 date)))]
     [:br]
     [:span#year
-     (nth date 2)]])
+     (apply str (nthnext date 5))]])
 
 (defhtml post-list [post]
-  (make-date (:daye post))
   [:div.post-listing
    (make-date (:date post))
    [:br]
    [:h4#post-list-title
-    [:a {:href (make-post-name post)}
+    [:a {:href (make-post-name post (str "/" *posts-out-folder*))}
      (:title post)]]
    [:br]
-   (tags (:tags post))])
+   (tags (:tags post) "This post is about ")])
 
 (defhtml make-link [[text link desc]]
   [:a.link-item {:href link} text]
@@ -86,33 +86,34 @@
   ;; [""] :body ""}
   (page-prelude *title*
    [:h1#author-title
-    *author*]
+    *title*]
    [:div#info
-    [:ul.info-row
-     [:li#about.info-cell
-      [:div
-       [:h2
-        "About"]
-       *about-text*]]
-     [:li#links.info-cell
-      [:div
-       [:h2
-        "Links"]
-       (map make-link (partition 3 *links*))]]]]
+    [:div#about.info-item
+     [:h2
+      "About"]
+     *about-text*]
+    [:div#links.info-item
+     [:h2
+      "Links"]
+     (map make-link (partition 3 *links*))]]
    [:div#posts
     [:h3
      "Posts"]
     (map post-list posts)]))
 
-(defhtml post-page [post]
+(defhtml page [post date tag-str]
   (page-prelude (str (:title post) " - " *title*)
    (author-link)
    [:h1
     (:title post)]
    [:div#post
-    (make-date (:date post))
+    (if date
+      (make-date (:date post)))
     (:body post)]
-   (tags (:tags post))))
+   (tags (:tags post) tag-str)))
+
+(defhtml post-page [post]
+  (page post true "More on "))
 
 (defhtml tag-page [tag]
   (page-prelude (str "Posts about " (:name tag) " - " *title*)

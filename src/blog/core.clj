@@ -6,7 +6,7 @@
         hiccup.core
         [clojure.string :only [split]]
         [clj-time.core :only [now from-time-zone
-                              time-zone-for-offset year]]
+                              time-zone-for-offset year before?]]
         [clj-time.format :only [formatter unparse parse]]
         [clojure.contrib.duck-streams :only [read-lines write-lines]]
         [clojure.java.io :only [file]])
@@ -29,17 +29,16 @@
 (defn- read-post [post]
   (let [lns (read-lines post)
         time (from-time-zone (now) (time-zone-for-offset 8))
-        date-list [(unparse (formatter "MMM") time)
-                   (unparse (formatter "dd") time)
-                   (year time)]
-        lines (if (= \[ (first (first lns)))
+        date (unparse (formatter "MMMddYYYY") time)
+        lines (if (= \$ (first (first lns)))
                 lns
-                (do (write-lines post (conj lns (str date-list)))
+                (do (write-lines post (conj lns (str "$" date)))
                     (read-lines post)))]
-    (if (= (second lines) "D")
+    (if (= (take 2 (second lines)) "$D")
       nil
-      {:title (second lines) :tags (split (nth lines 2) #"\s")
-       :date (read-string (first lines))
+      {:title (second lines)
+       :tags (split (nth lines 2) #"\s")
+       :date (drop 1 (first lines))
        :body (markdown-to-html
               (apply str (interpose "\n" (nthnext lines 3))))})))
 
@@ -54,7 +53,7 @@
 
 (defn- write-extra [[inpath outpath]]
   (spit (str *out-folder* outpath)
-        (post-page (read-post (str *out-folder* inpath)))))
+        (page (read-post (str *out-folder* inpath)) false "")))
 
 (defn- get-post-tags [posts]
   (let [tags (distinct (mapcat :tags posts))
@@ -73,6 +72,9 @@
   ;;takes list of empty tags and list of posts and adds posts to tags
   (map #(add-posts-tag % posts) tags))
 
+(defn- sort-posts [posts]
+  (sort-by #(parse (formatter "MMMddYYYY") (:date %)) before? posts))
+
 (defn update-blog []
   (let [is-post
         #(and (not (.isDirectory %))
@@ -80,34 +82,31 @@
                  (apply str (take-last
                              (count *post-extension*)
                              (.getName %)))))
-        files (filter is-post (file-seq (file *posts-folder*)))
+        files (filter is-post (file-seq (file *posts-path*)))
         posts (filter identity
-                      (reverse (map read-post files))) ;; reversed so the most
+                      (reverse (map read-post files)))
         ;; recent is on top
         tags (add-posts-tags (get-post-tags posts) posts)]
     (println "Saving CSS to: " *out-css-path* )
     (save-blog-css *out-css-path*)
     (println "Saving home page to: " *out-html-path*)
     (spit *out-html-path* (home-page posts))
-    (println "Saving posts to: " *posts-out-folder*)
+    (println "Saving posts to: " *posts-out-path*)
     (dorun (map write-post posts))
-    (println "Saving tags to: " *tags-out-folder*)
+    (println "Saving tags to: " *tags-out-path*)
     (dorun (map write-tag tags))
     (if (> (count *links*) 9)
       (do (concat *links* ["More" "links.html" ""])
-          (prn "here")
           (println "*Links list longer than 3 items*")
           (println "Saving links page to: " (str *out-folder* "links.html"))
           (spit (str *out-folder* "links.html") (links-page))))
-    (if *extra-pages*
-      (do (println "Generating extra pages")
-          (map write-extra (partition 2 *extra-pages*)))))
+    (println "Generating extra pages")
+    (dorun (map write-extra (partition 2 *extra-pages*))))
   (println "Blog generated in " *out-folder*))
 
 (defn main [& args]
   (if args
     (do (println "Reading config file from: " (first args))
-        (load-file (first args))
         (redef-config (slurp (first args)))))
   (update-blog))
 
