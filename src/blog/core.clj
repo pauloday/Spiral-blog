@@ -2,7 +2,6 @@
   (:use blog.views
         blog.config
         blog.showdown
-        [blog.css :only [save-blog-css]]
         hiccup.core
         [clojure.string :only [split]]
         [clj-time.core :only [now from-time-zone
@@ -87,8 +86,6 @@
                       (reverse (map read-post files)))
         ;; recent is on top
         tags (add-posts-tags (get-post-tags posts) posts)]
-    (println "Saving CSS to: " *out-css-path* )
-    (save-blog-css *out-css-path*)
     (println "Saving home page to: " *out-html-path*)
     (spit *out-html-path* (home-page posts))
     (println "Saving posts to: " *posts-out-path*)
