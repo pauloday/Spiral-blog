@@ -1,7 +1,6 @@
 (ns blog.core
   (:use blog.views
         blog.config
-        blog.showdown
         hiccup.core
         [clojure.string :only [split]]
         [clj-time.core :only [now from-time-zone
