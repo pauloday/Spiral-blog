@@ -1,9 +1,9 @@
-(defproject spiral-blog "1.0"
+(defproject spiral-blog "1"
   :description "A flat-file blog engine"
-  :dependencies [[org.clojure/clojure "1.2.1"]
+  :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [gaka "0.2.0"]
                  [hiccup "0.3.0"]
-                 [rhino/js "1.7R2"]
-                 [clj-time "0.3.5"]]
+                 [clj-time "0.3.5"]
+                 [org.pegdown/pegdown "1.0.2"]]
   :main blog.core)

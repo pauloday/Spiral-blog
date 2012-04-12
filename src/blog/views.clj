@@ -8,7 +8,7 @@
     (str prestr (URLEncoder/encode (post :title)) ".html")))
 
 (defn make-tag-name [tag]
-  (str *tags-out-folder*  (URLEncoder/encode (tag :name)) ".html"))
+  (str *tags-out-path*  (URLEncoder/encode (tag :name)) ".html"))
 
 (defhtml footer []
   [:div#footer
@@ -21,22 +21,7 @@
    [:a {:href (str "mailto:" *email*)} "Contact me"]])
 
 (defhtml page-prelude [title & body]
-  [:link {:rel "stylesheet"
-          :type "text/css"
-          :href (str "/" *out-css-file*)}]
-  [:link {:rel "shortcut icon"
-          :type "image/x-icon"
-          :href *favicon*}]
-  [:link {:href
-          "/resources/google-code-prettify/prettify.css"
-          :type "text/css"
-          :rel "stylesheet"}]
-  [:script {:type "text/javascript"
-            :src
-            "/resources/google-code-prettify/prettify.js"}]
-  [:script {:type "text/javascript"
-            :src
-            "/resources/google-code-prettify/lang-clj.js"}]
+  *includes*
   [:title title]
   [:body
    { :onload "prettyPrint()"}
@@ -77,9 +62,9 @@
    [:br]
    (tags (:tags post) "This post is about ")])
 
-(defhtml make-link [[text link desc]]
-  [:a.link-item {:href link} text]
-  [:div#link-desc " - " desc [:br]])
+(defhtml make-link [link]
+  [:a.link-item {:href (:href link)} (:title link)]
+  [:div#link-desc " - " (:desc link) [:br]])
 
 (defhtml home-page [posts]
   ;; posts is a vector of maps {:title "" :tags
@@ -95,7 +80,7 @@
     [:div#links.info-item
      [:h2
       "Links"]
-     (map make-link (partition 3 *links*))]]
+     (map make-link *links*)]]
    [:div#posts
     [:h3
      "Posts"]

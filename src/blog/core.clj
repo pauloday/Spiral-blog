@@ -7,52 +7,43 @@
         [clj-time.core :only [now from-time-zone
                               time-zone-for-offset year before?]]
         [clj-time.format :only [formatter unparse parse]]
-        [clojure.contrib.duck-streams :only [read-lines write-lines]]
         [clojure.java.io :only [file]])
   (:import
-           [org.mozilla.javascript Context ScriptableObject])
+           [org.pegdown PegDownProcessor Extensions])
   (:gen-class :main true))
 
-(defn markdown-to-html [txt]
-  (let [cx (Context/enter)
-        scope (.initStandardObjects cx)
-        input (Context/javaToJS txt scope)
-        script (str *showdown-str*
-                    "new Showdown.converter().makeHtml(input);")]
-    (try
-     (ScriptableObject/putProperty scope "input" input)
-     (let [result (.evaluateString cx scope script "<cmd>" 1 nil)]
-       (Context/toString result))
-     (finally (Context/exit)))))
+(defn md-to-html [txt]
+  (let [pd ( PegDownProcessor. Extensions/SMARTS)]
+    (.markdownToHtml pd txt)))
 
-(defn- read-post [post]
-  (let [lns (read-lines post)
-        time (from-time-zone (now) (time-zone-for-offset 8))
-        date (unparse (formatter "MMMddYYYY") time)
-        lines (if (= \$ (first (first lns)))
-                lns
-                (do (write-lines post (conj lns (str "$" date)))
-                    (read-lines post)))]
-    (if (= (take 2 (second lines)) "$D")
-      nil
-      {:title (second lines)
-       :tags (split (nth lines 2) #"\s")
-       :date (drop 1 (first lines))
-       :body (markdown-to-html
-              (apply str (interpose "\n" (nthnext lines 3))))})))
+(defn- process-post [txt]
+  (if (= "$D" (take 2 txt))
+    nil
+    (let [lines (split txt #"\n")
+          time (from-time-zone (now) (time-zone-for-offset *tz*))
+          date (unparse (formatter "MMMddYYYY") time)
+          mk-struct #(hash-map
+                      :date (first %)
+                      :title (second %)
+                      :tags (split (nth % 2) #"\s")
+                      :body (md-to-html (apply str
+                                               (interpose "\n" (drop 3 %)))))]
+      (if (= \$ (first (first lines)))
+        (mk-struct (cons date lines)))
+      (mk-struct lines))))
 
-(defn- write-thing [thing namefn pagefn]
-  (spit (namefn thing) (pagefn thing)))
+(defn read-post [file]
+  (process-post (slurp file)))
 
 (defn- write-post [post]
-  (write-thing post make-post-name post-page))
+  (spit (make-post-name post) (post-page post)))
 
 (defn- write-tag [tag]
-  (write-thing tag make-tag-name tag-page))
+  (spit (make-tag-name tag) (tag-page tag)))
 
-(defn- write-extra [[inpath outpath]]
-  (spit (str *out-folder* outpath)
-        (page (read-post (str *out-folder* inpath)) false "")))
+(defn- write-extra [extra]
+  (spit (str *out-folder* (:out extra))
+        (page (read-post (str *out-folder* (:file extra))) false "")))
 
 (defn- get-post-tags [posts]
   (let [tags (distinct (mapcat :tags posts))
@@ -98,7 +89,7 @@
           (println "Saving links page to: " (str *out-folder* "links.html"))
           (spit (str *out-folder* "links.html") (links-page))))
     (println "Generating extra pages")
-    (dorun (map write-extra (partition 2 *extra-pages*))))
+    (dorun (map write-extra *extra-pages*)))
   (println "Blog generated in " *out-folder*))
 
 (defn main [& args]
