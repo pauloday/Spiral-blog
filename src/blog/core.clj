@@ -19,10 +19,10 @@
   (if (= "$D" (take 2 txt))
     nil
     (let [lines (split txt #"\n")
-          time (from-time-zone (now) (time-zone-for-offset *tz*))
+          time (from-time-zone (now) (time-zone-for-offset tz))
           date (unparse (formatter "MMMddYYYY") time)
           mk-struct #(hash-map
-                      :date (first %)
+                      :date (drop 1 (first %))
                       :title (second %)
                       :tags (split (nth % 2) #"\s")
                       :body (md-to-html (apply str
@@ -41,8 +41,8 @@
   (spit (make-tag-name tag) (tag-page tag)))
 
 (defn- write-extra [extra]
-  (spit (str *out-folder* (:out extra))
-        (page (read-post (str *out-folder* (:file extra))) false "")))
+  (spit (str out-folder (:out extra))
+        (page (read-post (str out-folder (:file extra))) false "")))
 
 (defn- get-post-tags [posts]
   (let [tags (distinct (mapcat :tags posts))
@@ -67,34 +67,35 @@
 (defn update-blog []
   (let [is-post
         #(and (not (.isDirectory %))
-              (= *post-extension*
+              (= post-extension
                  (apply str (take-last
-                             (count *post-extension*)
+                             (count post-extension)
                              (.getName %)))))
-        files (filter is-post (file-seq (file *posts-path*)))
+        files (filter is-post (file-seq (file posts-path)))
         posts (filter identity
                       (reverse (map read-post files)))
         ;; recent is on top
         tags (add-posts-tags (get-post-tags posts) posts)]
-    (println "Saving home page to: " *out-html-path*)
-    (spit *out-html-path* (home-page posts))
-    (println "Saving posts to: " *posts-out-path*)
+    (println "Saving home page to: " out-html-path)
+    (spit out-html-path (home-page posts))
+    (println "Saving posts to: " posts-out-path)
     (dorun (map write-post posts))
-    (println "Saving tags to: " *tags-out-path*)
+    (println "Saving tags to: " tags-out-path)
     (dorun (map write-tag tags))
-    (if (> (count *links*) 9)
-      (do (concat *links* ["More" "links.html" ""])
-          (println "*Links list longer than 3 items*")
-          (println "Saving links page to: " (str *out-folder* "links.html"))
-          (spit (str *out-folder* "links.html") (links-page))))
+    (if (> (count links) 9)
+      (do (concat links ["More" "links.html" ""])
+          (println "Links list longer than 3 items")
+          (println "Saving links page to: " (str out-folder "links.html"))
+          (spit (str out-folder "links.html") (links-page))))
     (println "Generating extra pages")
-    (dorun (map write-extra *extra-pages*)))
-  (println "Blog generated in " *out-folder*))
+    (dorun (map write-extra extra-pages)))
+  (println "Blog generated in " out-folder))
 
 (defn main [& args]
   (if args
     (do (println "Reading config file from: " (first args))
-        (redef-config (slurp (first args)))))
+        (load-file (first args))
+        (redef-config)))
   (update-blog))
 
 (defn -main [& args]

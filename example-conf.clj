@@ -6,64 +6,64 @@
 ;; generator. It is read using "slurp", so make sure the size of the
 ;; file does not exceed the size of your RAM (somehow).
 
-(def *author* "Author")
+(def author "Author")
 
-(def *email* "Email")
+(def email "Email")
 
 ;; Displayed in the taskbar of the browser
-(def *title* "Title")
+(def title "Title")
 
 ;; Timezone offset from UTC
-(def *tz* 8)
+(def tz 8)
 
 ;; All files ending with this extension in the posts folder are
 ;; treated as posts
-(def *post-extension* ".md")
+(def post-extension ".md")
 
 ;; The folder to output the blog to, it must be reletive, but all the
 ;; other paths are reletive to it.
-(def *out-folder* "")
+(def out-folder "")
 
 ;; The homepage file
-(def *out-html-file* "index.html")
+(def out-html-file "index.html")
 
 ;; The folder thatcontains all the posts
-(def *post-files-folder* "post-files/")
+(def post-files-folder "post-files/")
 
 ;; The folder that contains all the HTML for each post page
-(def *posts-out-folder* "posts/")
+(def posts-out-folder "posts/")
 
 ;; The folder that contains all the html for each tag page
-(def *tags-folder* "tags/")
+(def tags-folder "tags/")
 
 ;; The url for the favicon
-(def *favicon* "/resources/img/favicon.ico")
+(def favicon "/resources/img/favicon.ico")
 
 ;; The links. A list of {:title "title" :desc "desc" :href "href"}
 ;; where title is the text that is displayed, href is the link, and
 ;; desc is the description displayed next to the link.
-(def *links*
+(def links
   [{:title "This Site"
     :href "https://github.com/ertdfgcb/"
     :desc "The code for generating this blog on Github"}])
 
 ;; The text to display below the links box. newlines are ignored
-(def *about-text* "About text")
+(def about-text "About text")
 
 ;; Extra pages in the form [:file "file" :out "out]. These are
 ;; generated without a date at the location at :out
-(def *extra-pages* [{:file "extra/404.md"
+(def extra-pages [{:file "extra/404.md"
                      :out "404.html"}])
 
 ;; This is included in every page. Can be used to include
 ;; css/javascript/whatever for each page. Can be either a string of
 ;; valid html, or a hiccup data structure, like it is here.
-(def *includes*  (list [:link {:rel "stylesheet"
+(def includes  (list [:link {:rel "stylesheet"
                                :type "text/css"
                                :href "/resources/css/style.css"}]
                          [:link {:rel "shortcut icon"
                                  :type "image/x-icon"
-                                 :href *favicon*}]
+                                 :href favicon}]
                          [:link {:href
                                  "/resources/google-code-prettify/prettify.css"
                                  :type "text/css"

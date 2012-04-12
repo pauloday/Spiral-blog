@@ -4,11 +4,11 @@
   (:import [java.net URLEncoder]))
 
 (defn make-post-name [post & root]
-  (let [prestr (if root (first root) *posts-out-path*)]
+  (let [prestr (if root (first root) posts-out-path)]
     (str prestr (URLEncoder/encode (post :title)) ".html")))
 
 (defn make-tag-name [tag]
-  (str *tags-out-path*  (URLEncoder/encode (tag :name)) ".html"))
+  (str tags-out-path  (URLEncoder/encode (tag :name)) ".html"))
 
 (defhtml footer []
   [:div#footer
@@ -18,10 +18,10 @@
    " and "
    [:a.footer-link {:href "http://github.com/weavejester/hiccup"} "Hiccup"]
    [:br]
-   [:a {:href (str "mailto:" *email*)} "Contact me"]])
+   [:a {:href (str "mailto:" email)} "Contact me"]])
 
 (defhtml page-prelude [title & body]
-  *includes*
+  includes
   [:title title]
   [:body
    { :onload "prettyPrint()"}
@@ -31,10 +31,10 @@
 
 (defhtml author-link []
   [:h3#author-title
-   [:a#author-link {:href "/"} *author*]])
+   [:a#author-link {:href "/"} author]])
 
 (defhtml tag-link [name]
-  [:a.tag-link {:href (str "/" *tags-folder* name ".html")} name])
+  [:a.tag-link {:href (str "/" tags-folder name ".html")} name])
 
 (defhtml tags [tags & intro]
   [:h5#tags
@@ -57,7 +57,7 @@
    (make-date (:date post))
    [:br]
    [:h4#post-list-title
-    [:a {:href (make-post-name post (str "/" *posts-out-folder*))}
+    [:a {:href (make-post-name post (str "/" posts-out-folder))}
      (:title post)]]
    [:br]
    (tags (:tags post) "This post is about ")])
@@ -69,25 +69,25 @@
 (defhtml home-page [posts]
   ;; posts is a vector of maps {:title "" :tags
   ;; [""] :body ""}
-  (page-prelude *title*
+  (page-prelude title
    [:h1#author-title
-    *title*]
+    title]
    [:div#info
     [:div#about.info-item
      [:h2
       "About"]
-     *about-text*]
+     about-text]
     [:div#links.info-item
      [:h2
       "Links"]
-     (map make-link *links*)]]
+     (map make-link links)]]
    [:div#posts
     [:h3
      "Posts"]
     (map post-list posts)]))
 
 (defhtml page [post date tag-str]
-  (page-prelude (str (:title post) " - " *title*)
+  (page-prelude (str (:title post) " - " title)
    (author-link)
    [:h1
     (:title post)]
@@ -101,7 +101,7 @@
   (page post true "More on "))
 
 (defhtml tag-page [tag]
-  (page-prelude (str "Posts about " (:name tag) " - " *title*)
+  (page-prelude (str "Posts about " (:name tag) " - " title)
    (author-link)
    [:h1#tag-title
     (:name tag)]
@@ -109,8 +109,8 @@
     (map post-list (:posts tag))]))
 
 (defhtml links-page []
-  (page-prelude (str "Links - " *title*)
+  (page-prelude (str "Links - " title)
    (author-link)
    [:h1
     "Links"
-    (map make-link (partition 3 *links*))]))
+    (map make-link (partition 3 links))]))
